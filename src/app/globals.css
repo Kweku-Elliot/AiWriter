@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 240 5% 98%; /* #F9FAFB */
+    --foreground: 224 71% 4%; /* #0F172A */
+    
+    --card: 240 5% 98%; /* #F9FAFB */
+    --card-foreground: 224 71% 4%; /* #0F172A */
+    
+    --popover: 240 5% 98%; /* #F9FAFB */
+    --popover-foreground: 224 71% 4%; /* #0F172A */
+    
+    --primary: 242 75% 58%; /* #4F46E5 */
+    --primary-foreground: 240 100% 99%; /* A light color for text on primary */
+    
+    --secondary: 240 4% 90%;
+    --secondary-foreground: 224 71% 4%;
+    
+    --muted: 240 4% 90%;
+    --muted-foreground: 224 71% 25%;
+    
+    --accent: 251 92% 76%; /* #A78BFA */
+    --accent-foreground: 224 71% 4%;
+    
+    --destructive: 24 95% 53%; /* #F97316 */
+    --destructive-foreground: 240 100% 99%;
+    
+    --border: 240 4% 85%;
+    --input: 240 4% 93%;
+    --ring: 242 75% 58%;
+    
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    --background: 224 71% 10%; /* #0F172A */
+    --foreground: 240 5% 98%; /* #F9FAFB */
+    
+    --card: 224 71% 10%; /* #0F172A */
+    --card-foreground: 240 5% 98%; /* #F9FAFB */
+    
+    --popover: 224 71% 10%; /* #0F172A */
+    --popover-foreground: 240 5% 98%; /* #F9FAFB */
+    
+    --primary: 242 75% 58%; /* #4F46E5 */
+    --primary-foreground: 240 100% 99%;
+    
+    --secondary: 224 71% 15%;
+    --secondary-foreground: 240 5% 98%;
+    
+    --muted: 224 71% 15%;
+    --muted-foreground: 240 5% 65%;
+    
+    --accent: 251 92% 76%; /* #A78BFA */
+    --accent-foreground: 240 5% 98%;
+    
+    --destructive: 24 95% 53%; /* #F97316 */
+    --destructive-foreground: 240 100% 99%;
+    
+    --border: 224 71% 15%;
+    --input: 224 71% 15%;
+    --ring: 242 75% 58%;
+    
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+
+  /* Sync sidebar colors with main theme */
+  :root, .dark {
+    --sidebar-background: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--secondary); /* Use secondary for hover */
+    --sidebar-accent-foreground: var(--secondary-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

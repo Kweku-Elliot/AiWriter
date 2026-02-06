@@ -1,0 +1,7 @@
+export const CREDIT_COSTS = {
+  CHAT_FIX: 1,
+  RESUME_GENERATOR: 5,
+  VOICE_NOTE: 3,
+  AI_TUTOR: 2,
+  LONG_SUMMARY: 8,
+};

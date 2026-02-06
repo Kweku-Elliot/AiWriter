@@ -1,0 +1,99 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions to make rules cleaner
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function existingData() {
+      return resource != null ? resource.data : null;
+    }
+    
+    function incomingData() {
+      return request.resource.data;
+    }
+    
+    // ----- RULES FOR NEW USER DOCUMENT CREATION ('create') -----
+    function isNewUserDocumentValid() {
+      return incomingData().credits == 25
+          && incomingData().plan == 'Free'
+          && 'history' in incomingData() && incomingData().history is list
+          && 'billingHistory' in incomingData() && incomingData().billingHistory is list
+          && incomingData().hasReceivedFreeCredits == true
+          && incomingData().keys().hasOnly(['credits', 'plan', 'history', 'billingHistory', 'hasReceivedFreeCredits']);
+    }
+
+    // ----- RULES FOR EXISTING USER DOCUMENT UPDATES ('update') -----
+    function isFieldStructureSecure() {
+      return incomingData().keys().hasOnly(['credits', 'plan', 'history', 'billingHistory', 'hasReceivedFreeCredits'])
+          && incomingData().plan is string
+          && incomingData().credits is number
+          && incomingData().history is list
+          && incomingData().billingHistory is list
+          && incomingData().hasReceivedFreeCredits is bool;
+    }
+    
+    function isHistoryUpdateValid() {
+      return existingData() == null || 
+             (existingData().history is list && 
+              incomingData().history.size() <= existingData().history.size() + 1);
+    }
+
+    function isBillingUpdateValid() {
+      // Allow any billing history update as long as the types are correct
+      return incomingData().billingHistory is list &&
+             (existingData() == null || existingData().billingHistory is list);
+    }
+
+    function isCreditOrPlanUpdateValid() {
+      // For new documents, allow the update
+      return existingData() == null ||
+      
+      // For existing documents, check the update type
+      (
+        // Case 1: Credit purchase (credits increasing)
+        (incomingData().credits > existingData().credits) ||
+        
+        // Case 2: Plan change
+        (incomingData().plan != existingData().plan) ||
+        
+        // Case 3: Using credits (credits decreasing)
+        (
+          incomingData().credits < existingData().credits &&
+          incomingData().plan == existingData().plan
+        ) ||
+        
+        // Case 4: No changes
+        (
+          incomingData().credits == existingData().credits &&
+          incomingData().plan == existingData().plan
+        )
+      );
+    }
+
+    // ----- FINAL MATCH STATEMENT FOR 'users' -----
+    match /users/{userId} {
+      // A user can only read their own document.
+      allow read: if isOwner(userId);
+      
+      // A user cannot delete their document.
+      allow delete: if false;
+
+      // Separate rules for create and update
+      allow create: if isOwner(userId) && isFieldStructureSecure() && isNewUserDocumentValid();
+      allow update: if isOwner(userId) && isFieldStructureSecure() && isHistoryUpdateValid() && isBillingUpdateValid() && isCreditOrPlanUpdateValid();
+    }
+    
+    // Default deny all access to other documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
