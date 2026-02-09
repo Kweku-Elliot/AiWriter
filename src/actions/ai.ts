@@ -14,13 +14,11 @@ import {
 } from '@/ai/flows/long-summary-generator';
 
 export async function runChatFix(input: ChatFixInput): Promise<ChatFixOutput> {
-  try {
-    const result = await chatFix(input);
-    return result;
-  } catch (error) {
-    console.error('Error in runChatFix:', error);
-    throw new Error('Failed to rewrite message. Please try again.');
+  const result = await chatFix(input);
+  if (result.error) {
+    console.error('Error in runChatFix:', result.error);
   }
+  return result;
 }
 
 export async function runResumeGenerator(input: ResumeAndCoverLetterInput): Promise<ResumeAndCoverLetterOutput> {

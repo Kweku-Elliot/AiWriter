@@ -49,12 +49,19 @@ export default function ChatFixPage() {
 
     try {
       const output = await runChatFix(data);
+      if (output.error) {
+        toast({ variant: 'destructive', title: 'Error', description: output.error });
+        return;
+      }
       const deducted = await deductCredits(CREDIT_COSTS.CHAT_FIX);
       if (deducted) {
         await addToHistory({ type: 'ChatFix', input: data, output });
         toast({ title: 'Success!', description: `${CREDIT_COSTS.CHAT_FIX} credit(s) deducted.` });
+      } else {
+        toast({ variant: 'destructive', title: 'Error', description: 'Unable to deduct credits.' });
+        return;
       }
-       setResult(output);
+      setResult(output);
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
     } finally {
